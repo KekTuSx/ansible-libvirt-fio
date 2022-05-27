@@ -1,0 +1,19 @@
+- name: Vytvoreni VM z image
+  hosts: localhost
+  gather_facts: true
+  become: true
+  vars:
+    pool_dir: "/var/lib/libvirt/images"
+    vm: vm
+    vcpus: 1
+    ram_mb: 1024
+
+  tasks:
+    - name: Role na vytvoreni VM
+      include_role:
+        name: provision
+      vars:
+        libvirt_pool_dir: "{{ pool_dir }}"
+        vm_name: "{{ vm }}"
+        vm_vcpus: "{{ vcpus }}"
+        vm_ram_mb: "{{ ram_mb }}"

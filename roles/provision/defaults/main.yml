@@ -1,0 +1,12 @@
+---
+# defaults file for provision
+base_image_name: debian-11-genericcloud-amd64.qcow2
+base_image_url: https://cloud.debian.org/images/cloud/bullseye/latest/{{ base_image_name }}
+base_image_sha: a5d7f8c1b304cc951ccf943982217229a8225794cffd799ced25fab987a968f8
+libvirt_pool_dir: "/var/lib/libvirt/images"
+vm_name: vm
+vm_vcpus: 1
+vm_ram_mb: 1024
+vm_net: default
+vm_root_pass: root
+ssh_key: /root/.ssh/id_rsa.pub

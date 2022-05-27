@@ -1,0 +1,50 @@
+---
+# tasks file for provision
+- name: Seznam existujicich VMs
+  community.libvirt.virt:
+    command: list_vms
+  register: existing_vms
+  changed_when: no
+
+- name: Vytvorit VM, pokud neexistuje
+  block:
+    - name: Stazeni image
+      get_url:
+        url: "{{ base_image_url }}"
+        dest: "/tmp/{{ base_image_name }}"
+        checksum: "sha256:{{ base_image_sha }}"
+        
+    - name: Kopirovani image do libvirt image poolu
+      copy:
+        dest: "{{ libvirt_pool_dir }}/{{ vm_name }}.qcow2"
+        src: "/tmp/{{ base_image_name }}"
+        force: no
+        remote_src: yes 
+        mode: 0660
+      register: copy_results
+
+    - name: Konfigurace image
+      command: |
+        virt-customize -a {{ libvirt_pool_dir }}/{{ vm_name }}.qcow2 \
+        --run-command 'cd /etc/ssh && ssh-keygen -A'
+        --run-command '/etc/init.d/ssh start'
+        --hostname {{ vm_name }} \
+        --root-password password:{{ vm_root_pass }} \
+        --ssh-inject 'root:file:{{ ssh_key }}' \
+        --uninstall cloud-init
+      when: copy_results is changed
+
+    - name: Definovani VM podle templatu
+      community.libvirt.virt:
+        command: define
+        xml: "{{ lookup('template', 'vm.xml.j2') }}"
+  when: "vm_name not in existing_vms.list_vms"
+
+- name: Kontrola, ze VM bezi
+  community.libvirt.virt:
+    name: "{{ vm_name }}"
+    state: running
+  register: vm_start_results
+  until: "vm_start_results is success"
+  retries: 5
+  delay: 2
