@@ -14,6 +14,6 @@ apt install -y ansible
 ansible-galaxy collection install community.libvirt
 
 # Vytvoreni SSH klicu
-ssh-keygen
+ssh-keygen -q -t rsa -b 4096 -N '' -f /root/.ssh/id_rsa 
 
 virsh net-start default
