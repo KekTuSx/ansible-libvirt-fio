@@ -1,10 +1,12 @@
 #!/bin/bash
+#
+# Wipes all libvirt VMs from system
 
-# Ulozi pocet vyskytu stringu "vm*" ve vypisu vsech VMs do promenne = pocet VMs
-POCET=$(virsh list --all | grep -o "vm*" | wc -l)
+# Counts the occurences of 'vm*' in the command output
+COUNT=$(virsh list --all | grep -o "vm*" | wc -l)
 
-# Smaze VMs a jejich image
-for i in $(seq 1 $POCET)
+# Deletes the VM and its image
+for i in $(seq 1 $COUNT)
 do
 	virsh shutdown vm$i
 	virsh undefine vm$i

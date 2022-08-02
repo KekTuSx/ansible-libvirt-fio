@@ -1,4 +1,4 @@
-- name: Vytvoreni VM z image
+- name: Create VM from image
   hosts: localhost
   gather_facts: true
   become: true
@@ -9,7 +9,7 @@
     ram_mb: 1024
 
   tasks:
-    - name: Role na vytvoreni VM
+    - name: Provision VM
       include_role:
         name: provision
       vars:

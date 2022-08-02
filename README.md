@@ -1,26 +1,26 @@
-# <span style="color:red">V</span><span style="color:orange">M</span><span style="color:yellow">-</span><span style="color:lime">G</span><span style="color:blue">E</span><span style="color:violet">N</span>
+# ansible-libvirt-fio
+## File descriptions
 
-Vytvořeno pomocí Bashe a [Ansible](https://docs.ansible.com/) + [fio (flexible I/O tester)](https://fio.readthedocs.io/en/latest/fio_doc.html).
-## Popis souborů
+- role/provision/**defaults/main.yml** → default variable values
 
-**role/provision** → Ansible role = sbírka konfiguračních souborů
+- role/provision/**tasks/main.yml** → creates virtual machines
 
-- role/provision/**defaults/main.yml** → výchozí hodnoty proměnných
+- role/provision/**templates/vm.xml.j2** → defines VM properties
 
-- role/provision/**tasks/main.yml** → funkce, které vytvoří VM
+**vm-playbook.yaml** → Runs the *provision* role with specified parameters.
 
-- role/provision/**templates/vm.xml.j2** → definice vlastností VM ve formátu Jinja XML
+- setup.sh → installs required packages and Ansible, generates an SSH key pair and starts the default KVM(?) network
+- gen.sh → creates VMs and runs Fio tester on them
+- purge.sh → Wipes all libvirt VMs from system
 
-**vm-playbook.yaml** → Ansible playbook, který spustí roli *provision* se specifikovanými parametry
+## Configuring variables
+**Virtual machine** parameters are located in *vm-playbook.yaml* in the dictionary *vars*.
 
-## Nastavení proměnných
-Parametry **virtuálních strojů** je možno změnit v souboru *vm-playbook.yaml* ve slovníku *vars*.
+**Fio** options can be changed at the bottom of the *gen.sh*.
 
-Parametry **fia** se dají změnit na posledních 6 řádcích skriptu *gen.sh*.
+## Usage
+1. Run **setup.sh**, which is promptless.
 
-## Postup
-1. Spustit **setup.sh**, který nainstaluje Ansible a potřebné package, vytvoří SSH klíče a startne výchozí virtuální síť.
+2. Run **gen.sh** and enter how many VMs you want to create. It will ask for confirmation before running a fio benchmark.
 
-2. Spustit **gen.sh**; zeptá se, kolik virtuálních strojů chceme vytvořit, vytvoří je, zapíše jejich IP adresy do inventáře pro Ansible *inventory.ini* a nainstaluje na nich fio. Poté se zeptá, jestli chceme pokračovat a spustit na VMs fio.
-
-3. **Purge.sh** shutdownne a undefinene všechny virtuální stroje a smaže jejich image v */var/lib/libvirt/images*.
+3. When you're done, run **purge.sh** remove all VMs.
