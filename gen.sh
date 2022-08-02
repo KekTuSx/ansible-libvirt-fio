@@ -1,8 +1,8 @@
 #!/bin/bash
 
 echo '-----------------------------------------'
-read -p 'Kolik VMs chcete vytvorit? ' POCET
-read -p "Opravdu? (y/n): " confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || exit 1
+read -r -p 'Kolik VMs chcete vytvorit? ' POCET
+read -r -p "Opravdu? (y/n): " confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || exit 1
 
 # Priprava Ansible inventare (seznamu hostu) a host skupiny vms
 echo "[vms]" > inventory.ini
@@ -45,7 +45,7 @@ printf "\n"
 
 while true
 do
-	read -p "Spustit test? (y/n) " yn
+	read -r -p "Spustit test? (y/n) " yn
 
 	case $yn in 
 		[yY] ) echo Spusteno;
